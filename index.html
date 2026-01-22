@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<title>集數分類影片網頁</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+
+<div class="container">
+
+
+<h1>動畫播放清單</h1>
+
+
+<!-- 播放器 -->
+<div class="video-box">
+<iframe
+id="player"
+src="https://www.youtube.com/embed/dQw4w9WgXcQ"
+allowfullscreen>
+</iframe>
+</div>
+
+
+<!-- 第一季 -->
+<h2>第一季</h2>
+<div class="episode-list">
+<button onclick="changeVideo('ZJnKEDKfSx4')">第 1 集</button>
+<button onclick="changeVideo('p0HOfpMBUPg')">第 2 集</button>
+<button onclick="changeVideo('_hAEzhDbETQ')">第 3 集</button>
+<button onclick="changeVideo('WeOGtz_81Nw')">第 4 集</button>
+<button onclick="changeVideo('F7udQqMCFJU')">第 5 集</button>
+<button onclick="changeVideo('pVLrjgK1ewE')">第 6 集</button>
+<button onclick="changeVideo('I9G9nfkcdTI')">第 7 集</button>
+<button onclick="changeVideo('PISuZm8AlMk')">第 8 集</button>
+<button onclick="changeVideo('3JHRK43dRF0')">第 9 集</button>
+<button onclick="changeVideo('61UczTjcH2Y')">第 10 集</button>
+<button onclick="changeVideo('BraLKxD6DPw')">第 11 集</button>
+<button onclick="changeVideo('mzsgRU6uGwU')">第 12 集</button>
+<button onclick="changeVideo('mtZGz0l7_qw')">第 13 集</button>
+<button onclick="changeVideo('PjKW7OaqN_g')">第 14 集</button>
+<button onclick="changeVideo('xO26NYG5Ano')">第 15 集</button>
+<button onclick="changeVideo('xsREzctQzko')">第 16 集</button>
+<button onclick="changeVideo('HHAj2ywYX6I')">第 17 集</button>
+<button onclick="changeVideo('BF6NLJmuIM8')">第 18 集</button>
+<button onclick="changeVideo('qMbdI9GMGH4')">第 19 集</button>
+<button onclick="changeVideo('pGjqA99TeVc')">第 20 集</button>
+<button onclick="changeVideo('zbkUlgl6W6Q')">第 21 集</button>
+<button onclick="changeVideo('lbgII6KFa0w')">第 22 集</button>
+<button onclick="changeVideo('aqof1DJIzpA')">第 23 集</button>
+<button onclick="changeVideo('x1MuKyNOznQ')">第 24 集</button>
+<button onclick="changeVideo('mjn-erPSHiI')">第 25 集</button>
+<button onclick="changeVideo('1m1tHFkdsao')">第 26 集</button>
+<button onclick="changeVideo('wWgJ5RPhxUY')">第 27 集</button>
+<button onclick="changeVideo('TdBoW9y_U7Q')">第 28 集</button>
+
+</div>
+
+
+</div>
+
+
+<!-- JavaScript -->
+<script>
+function changeVideo(videoId) {
+document.getElementById('player').src =
+'https://www.youtube.com/embed/' + videoId;
+}
+</script>
+
+
+</body>
+</html>
