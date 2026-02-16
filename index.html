@@ -2,115 +2,149 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>萬用生活助手 - 正式版</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>萬用生活助手 - 敬老高清版</title>
+    
+    <!-- Web App 桌面化優化標籤 -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="生活助手">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="theme-color" content="#2563eb">
+
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap');
-        body { font-family: 'Noto Sans TC', sans-serif; background-color: #f8fafc; -webkit-tap-highlight-color: transparent; }
-        .tab-active { border-bottom: 3px solid #3b82f6; color: #3b82f6; }
-        .sub-tab-active { background-color: #3b82f6; color: white; box-shadow: 0 4px 10px -2px rgba(59, 130, 246, 0.4); }
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap');
+        body { 
+            font-family: 'Noto Sans TC', sans-serif; 
+            background-color: #f1f5f9; 
+            -webkit-tap-highlight-color: transparent;
+            -webkit-user-select: none;
+            user-select: none;
+            font-size: 18px; /* 全局基礎字體放大 */
+        }
+        /* 讓輸入框可以選取與輸入 */
+        input, textarea { -webkit-user-select: text; user-select: text; }
+        
+        .tab-active { border-bottom: 5px solid #2563eb; color: #1e40af; background-color: #f8fafc; }
+        .sub-tab-active { background-color: #2563eb; color: white; box-shadow: 0 6px 15px -3px rgba(37, 99, 235, 0.4); }
         .animate-fade-in { animation: fadeIn 0.4s ease-out; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
-        .fortune-card { background: linear-gradient(135deg, #fff5f5 0%, #fff0f0 100%); border: 1px solid #fee2e2; }
-        .calendar-day { min-height: 50px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-        /* 強化刪除按鈕視覺 */
-        .btn-delete { color: #ef4444; font-weight: 800; background-color: #fef2f2; border: 1px solid #fee2e2; padding: 4px 12px; border-radius: 8px; font-size: 12px; transition: all 0.2s; }
-        .btn-delete:active { background-color: #fee2e2; transform: scale(0.95); }
-        /* 強化時間標籤 */
-        .time-tag { color: #374151; font-weight: 600; background-color: #f3f4f6; padding: 2px 8px; border-radius: 6px; font-size: 11px; border: 1px solid #e5e7eb; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        
+        .fortune-card { background: linear-gradient(135deg, #fffaf0 0%, #fff5e6 100%); border: 2px solid #fbbf24; }
+        .calendar-day { min-height: 60px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        
+        /* 長輩版專屬大按鈕 */
+        .btn-large { padding: 18px; border-radius: 20px; font-size: 20px; font-weight: 900; transition: all 0.2s; }
+        
+        /* 強化刪除按鈕視覺 - 字體加大 */
+        .btn-delete { color: #dc2626; font-weight: 900; background-color: #fee2e2; border: 2px solid #fecaca; padding: 6px 16px; border-radius: 12px; font-size: 16px; }
+        .btn-delete:active { background-color: #fecaca; transform: scale(0.95); }
+        
+        /* 強化時間標籤 - 更清晰 */
+        .time-tag { color: #1f2937; font-weight: 700; background-color: #e5e7eb; padding: 4px 10px; border-radius: 8px; font-size: 14px; border: 1.5px solid #d1d5db; }
+
+        /* 內容字體強化 */
+        .content-text { font-size: 20px; line-height: 1.6; font-weight: 700; color: #111827; }
+        .contact-name { font-size: 24px; font-weight: 900; color: #000; }
+        .contact-phone { font-size: 22px; font-weight: 800; color: #2563eb; }
     </style>
 </head>
-<body class="p-4 flex flex-col justify-start items-center min-h-screen">
+<body class="p-2 md:p-4 flex flex-col justify-start items-center min-h-screen">
 
-    <div class="max-w-[450px] w-full bg-white rounded-[2.5rem] shadow-2xl overflow-hidden relative">
-        <!-- Header -->
-        <div class="bg-gradient-to-br from-blue-600 to-violet-700 p-8 text-white text-center">
-            <div id="clock" class="text-5xl font-bold font-mono mb-2">00:00:00</div>
-            <div id="date-display" class="text-sm opacity-80 font-medium">系統讀取中...</div>
-            <div id="lunar-display-top" class="text-xs mt-1 text-yellow-200">農曆讀取中...</div>
-            <div id="storage-status" class="mt-4 text-[10px] opacity-60 bg-black/20 py-1 px-3 rounded-full inline-block">本地儲存模式</div>
+    <div class="max-w-[480px] w-full bg-white rounded-[3rem] shadow-2xl overflow-hidden relative border-4 border-gray-200">
+        <!-- Header - 更顯眼 -->
+        <div class="bg-gradient-to-br from-blue-700 to-indigo-800 p-8 text-white text-center">
+            <div id="clock" class="text-6xl font-black font-mono mb-2 tracking-tighter">00:00:00</div>
+            <div id="date-display" class="text-xl font-bold mb-1">系統讀取中...</div>
+            <div id="lunar-display-top" class="text-lg text-yellow-300 font-bold">農曆讀取中...</div>
         </div>
 
-        <!-- 主導覽 -->
-        <nav class="flex border-b bg-gray-50/50">
-            <button onclick="switchTab('calendar')" id="tab-calendar" class="flex-1 py-4 text-sm font-bold tab-active">日曆運勢</button>
-            <button onclick="switchTab('memo')" id="tab-memo" class="flex-1 py-4 text-sm font-bold text-gray-400">生活備忘錄</button>
-            <button onclick="switchTab('contacts')" id="tab-contacts" class="flex-1 py-4 text-sm font-bold text-gray-400">個人電話簿</button>
+        <!-- 主導覽 - 文字加大 -->
+        <nav class="flex border-b-2 bg-gray-50">
+            <button onclick="switchTab('calendar')" id="tab-calendar" class="flex-1 py-5 text-lg font-black tab-active">日曆運勢</button>
+            <button onclick="switchTab('memo')" id="tab-memo" class="flex-1 py-5 text-lg font-black text-gray-500">生活備忘</button>
+            <button onclick="switchTab('contacts')" id="tab-contacts" class="flex-1 py-5 text-lg font-black text-gray-500">電話簿</button>
         </nav>
 
-        <main class="p-6 min-h-[500px] bg-white">
+        <main class="p-6 min-h-[550px] bg-white">
             <!-- 日曆區塊 -->
             <section id="section-calendar" class="space-y-6 animate-fade-in">
-                <div class="flex justify-between items-center">
-                    <h2 class="text-xl font-black text-gray-800" id="calendar-month">讀取中...</h2>
+                <div class="flex justify-center items-center">
+                    <h2 class="text-2xl font-black text-blue-900 bg-blue-50 px-6 py-2 rounded-full" id="calendar-month">讀取中...</h2>
                 </div>
-                <div class="bg-gray-50 rounded-3xl p-4 border border-gray-100">
-                    <div class="grid grid-cols-7 gap-1 text-center mb-2">
-                        <div class="text-[10px] font-bold text-gray-400">日</div>
-                        <div class="text-[10px] font-bold text-gray-400">一</div>
-                        <div class="text-[10px] font-bold text-gray-400">二</div>
-                        <div class="text-[10px] font-bold text-gray-400">三</div>
-                        <div class="text-[10px] font-bold text-gray-400">四</div>
-                        <div class="text-[10px] font-bold text-gray-400">五</div>
-                        <div class="text-[10px] font-bold text-gray-400">六</div>
+                <div class="bg-white rounded-3xl p-4 border-2 border-gray-200 shadow-inner">
+                    <div class="grid grid-cols-7 gap-1 text-center mb-3">
+                        <div class="text-sm font-black text-red-500">日</div>
+                        <div class="text-sm font-black text-gray-600">一</div>
+                        <div class="text-sm font-black text-gray-600">二</div>
+                        <div class="text-sm font-black text-gray-600">三</div>
+                        <div class="text-sm font-black text-gray-600">四</div>
+                        <div class="text-sm font-black text-gray-600">五</div>
+                        <div class="text-sm font-black text-gray-800">六</div>
                     </div>
-                    <div id="calendar-grid" class="grid grid-cols-7 gap-1 text-center"></div>
+                    <div id="calendar-grid" class="grid grid-cols-7 gap-2 text-center"></div>
                 </div>
-                <!-- 運勢卡片 -->
-                <div class="fortune-card rounded-3xl p-5 space-y-3">
+                <!-- 運勢卡片 - 高對比度 -->
+                <div class="fortune-card rounded-3xl p-6 space-y-4">
                     <div class="flex items-center justify-between">
-                        <span class="text-red-600 font-bold text-sm">今日運勢</span>
-                        <span class="text-[10px] px-2 py-1 bg-red-100 text-red-600 rounded-full font-bold">每日占卜</span>
+                        <span class="text-red-700 font-black text-xl">今日運勢</span>
+                        <span class="text-sm px-3 py-1 bg-red-600 text-white rounded-lg font-bold">指引</span>
                     </div>
-                    <div id="fortune-text" class="text-gray-700 text-sm leading-relaxed font-medium">正在為您求籤...</div>
-                    <div class="grid grid-cols-2 gap-2 mt-2">
-                        <div class="bg-green-50 p-2 rounded-xl border border-green-100">
-                            <span class="text-[10px] text-green-600 font-bold block">【宜】</span>
-                            <span id="fortune-suit" class="text-[11px] text-green-800">讀書、會友</span>
+                    <div id="fortune-text" class="text-gray-900 text-xl leading-relaxed font-black">正在為您求籤...</div>
+                    <div class="grid grid-cols-2 gap-3 mt-2">
+                        <div class="bg-white p-3 rounded-2xl border-2 border-green-200">
+                            <span class="text-sm text-green-700 font-black block mb-1">【宜】</span>
+                            <span id="fortune-suit" class="text-base text-gray-900 font-bold">讀書、會友</span>
                         </div>
-                        <div class="bg-red-50 p-2 rounded-xl border border-red-100">
-                            <span class="text-[10px] text-red-600 font-bold block">【忌】</span>
-                            <span id="fortune-avoid" class="text-[11px] text-red-800">爭執、遠行</span>
+                        <div class="bg-white p-3 rounded-2xl border-2 border-red-200">
+                            <span class="text-sm text-red-700 font-black block mb-1">【忌】</span>
+                            <span id="fortune-avoid" class="text-base text-gray-900 font-bold">爭執、遠行</span>
                         </div>
                     </div>
                 </div>
             </section>
 
             <!-- 生活備忘錄區塊 -->
-            <section id="section-memo" class="hidden space-y-4 animate-fade-in">
-                <div class="flex bg-gray-100 p-1 rounded-xl">
-                    <button onclick="switchSubTab('memo', 'edit')" id="memo-sub-edit" class="flex-1 py-2 text-xs font-bold rounded-lg sub-tab-active">新增備忘</button>
-                    <button onclick="switchSubTab('memo', 'view')" id="memo-sub-view" class="flex-1 py-2 text-xs font-bold rounded-lg text-gray-500">查看清單</button>
+            <section id="section-memo" class="hidden space-y-6 animate-fade-in">
+                <div class="flex bg-gray-200 p-1.5 rounded-2xl">
+                    <button onclick="switchSubTab('memo', 'edit')" id="memo-sub-edit" class="flex-1 py-3 text-lg font-black rounded-xl sub-tab-active">新增內容</button>
+                    <button onclick="switchSubTab('memo', 'view')" id="memo-sub-view" class="flex-1 py-3 text-lg font-black rounded-xl text-gray-600">查看紀錄</button>
                 </div>
                 <div id="memo-view-edit">
-                    <textarea id="memo-input" placeholder="寫點什麼想保存的事..." rows="5" class="w-full p-4 bg-gray-50 rounded-2xl border-none text-sm outline-none resize-none mb-4"></textarea>
-                    <div class="grid grid-cols-2 gap-3">
-                        <button onclick="clearMemoInput()" class="bg-gray-200 text-gray-600 py-4 rounded-2xl font-bold active:scale-95">一鍵清空</button>
-                        <button onclick="saveMemo()" class="bg-blue-600 text-white py-4 rounded-2xl font-bold active:scale-95 shadow-lg shadow-blue-100">儲存備忘</button>
+                    <textarea id="memo-input" placeholder="在這裡寫字，會自動保存..." rows="6" class="w-full p-5 bg-gray-50 rounded-3xl border-2 border-gray-200 text-xl font-bold outline-none resize-none mb-6 focus:border-blue-500"></textarea>
+                    <div class="grid grid-cols-2 gap-4">
+                        <button onclick="clearMemoInput()" class="bg-gray-200 text-gray-700 btn-large active:scale-95">清除內容</button>
+                        <button onclick="saveMemo()" class="bg-blue-600 text-white btn-large active:scale-95 shadow-lg">儲存起來</button>
                     </div>
                 </div>
                 <div id="memo-view-view" class="hidden">
-                    <div id="memo-list" class="space-y-4"></div>
+                    <div id="memo-list" class="space-y-5"></div>
                 </div>
             </section>
 
             <!-- 個人電話簿區塊 -->
-            <section id="section-contacts" class="hidden space-y-4 animate-fade-in">
-                <div class="flex bg-gray-100 p-1 rounded-xl">
-                    <button onclick="switchSubTab('contacts', 'edit')" id="contacts-sub-edit" class="flex-1 py-2 text-xs font-bold rounded-lg sub-tab-active">新增聯絡人</button>
-                    <button onclick="switchSubTab('contacts', 'view')" id="contacts-sub-view" class="flex-1 py-2 text-xs font-bold rounded-lg text-gray-500">查看名單</button>
+            <section id="section-contacts" class="hidden space-y-6 animate-fade-in">
+                <div class="flex bg-gray-200 p-1.5 rounded-2xl">
+                    <button onclick="switchSubTab('contacts', 'edit')" id="contacts-sub-edit" class="flex-1 py-3 text-lg font-black rounded-xl sub-tab-active">新增電話</button>
+                    <button onclick="switchSubTab('contacts', 'view')" id="contacts-sub-view" class="flex-1 py-3 text-lg font-black rounded-xl text-gray-600">我的聯絡人</button>
                 </div>
-                <div id="contacts-view-edit" class="space-y-4">
-                    <input type="text" id="contact-name" placeholder="姓名" class="w-full p-4 bg-gray-50 rounded-xl border-none text-sm outline-none">
-                    <input type="tel" id="contact-phone" placeholder="電話" class="w-full p-4 bg-gray-50 rounded-xl border-none text-sm outline-none">
-                    <div class="grid grid-cols-2 gap-3">
-                        <button onclick="clearContactInput()" class="bg-gray-200 text-gray-600 py-4 rounded-xl font-bold active:scale-95">一鍵清空</button>
-                        <button onclick="saveContact()" class="bg-indigo-600 text-white py-4 rounded-xl font-bold active:scale-95 shadow-lg shadow-indigo-100">儲存資訊</button>
+                <div id="contacts-view-edit" class="space-y-5">
+                    <div class="space-y-2">
+                        <label class="font-black text-gray-700 ml-2">姓名：</label>
+                        <input type="text" id="contact-name" placeholder="請輸入姓名" class="w-full p-5 bg-gray-50 rounded-2xl border-2 border-gray-200 text-xl font-bold outline-none focus:border-indigo-500">
+                    </div>
+                    <div class="space-y-2">
+                        <label class="font-black text-gray-700 ml-2">電話：</label>
+                        <input type="tel" id="contact-phone" placeholder="請輸入電話號碼" class="w-full p-5 bg-gray-50 rounded-2xl border-2 border-gray-200 text-xl font-bold outline-none focus:border-indigo-500">
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <button onclick="clearContactInput()" class="bg-gray-200 text-gray-700 btn-large active:scale-95">清除</button>
+                        <button onclick="saveContact()" class="bg-indigo-700 text-white btn-large active:scale-95 shadow-lg">儲存電話</button>
                     </div>
                 </div>
                 <div id="contacts-view-view" class="hidden">
-                    <div id="contacts-list" class="space-y-3"></div>
+                    <div id="contacts-list" class="space-y-4"></div>
                 </div>
             </section>
         </main>
@@ -128,12 +162,18 @@
                 const el = document.getElementById(`section-${t}`);
                 const tabBtn = document.getElementById(`tab-${t}`);
                 if (el) el.classList.add('hidden');
-                if (tabBtn) tabBtn.classList.replace('tab-active', 'text-gray-400');
+                if (tabBtn) {
+                    tabBtn.classList.remove('tab-active');
+                    tabBtn.classList.add('text-gray-500');
+                }
             });
             const targetEl = document.getElementById(`section-${tab}`);
             const targetBtn = document.getElementById(`tab-${tab}`);
             if (targetEl) targetEl.classList.remove('hidden');
-            if (targetBtn) targetBtn.classList.replace('text-gray-400', 'tab-active');
+            if (targetBtn) {
+                targetBtn.classList.add('tab-active');
+                targetBtn.classList.remove('text-gray-500');
+            }
         };
 
         window.switchSubTab = (p, v) => {
@@ -142,12 +182,12 @@
             if (!eBtn || !vBtn || !eA || !vA) return;
 
             if (v === 'edit') {
-                eBtn.className = "flex-1 py-2 text-xs font-bold rounded-lg sub-tab-active";
-                vBtn.className = "flex-1 py-2 text-xs font-bold rounded-lg text-gray-500";
+                eBtn.className = "flex-1 py-3 text-lg font-black rounded-xl sub-tab-active";
+                vBtn.className = "flex-1 py-3 text-lg font-black rounded-xl text-gray-600";
                 eA.classList.remove('hidden'); vA.classList.add('hidden');
             } else {
-                vBtn.className = "flex-1 py-2 text-xs font-bold rounded-lg sub-tab-active";
-                eBtn.className = "flex-1 py-2 text-xs font-bold rounded-lg text-gray-500";
+                vBtn.className = "flex-1 py-3 text-lg font-black rounded-xl sub-tab-active";
+                eBtn.className = "flex-1 py-3 text-lg font-black rounded-xl text-gray-600";
                 eA.classList.add('hidden'); vA.classList.remove('hidden');
                 if(p === 'memo') renderMemos();
                 if(p === 'contacts') renderContacts();
@@ -184,7 +224,7 @@
             const text = input.value.trim();
             if (!text) return;
             const memos = JSON.parse(localStorage.getItem(MEMO_KEY) || '[]');
-            memos.unshift({ id: Date.now(), text, time: new Date().toLocaleString('zh-TW') });
+            memos.unshift({ id: Date.now(), text, time: new Date().toLocaleString('zh-TW', { hour12: false }) });
             localStorage.setItem(MEMO_KEY, JSON.stringify(memos));
             input.value = "";
             switchSubTab('memo', 'view');
@@ -194,14 +234,14 @@
             const list = document.getElementById('memo-list');
             const memos = JSON.parse(localStorage.getItem(MEMO_KEY) || '[]');
             list.innerHTML = memos.map(m => `
-                <div class="p-5 bg-white rounded-2xl border-2 border-gray-100 shadow-sm animate-fade-in">
-                    <p class="text-[15px] text-gray-800 font-medium leading-relaxed mb-4 whitespace-pre-wrap">${m.text}</p>
-                    <div class="flex justify-between items-center pt-3 border-t border-gray-100">
-                        <span class="time-tag">儲存：${m.time}</span>
-                        <button onclick="deleteItem('memo', ${m.id})" class="btn-delete">刪除紀錄</button>
+                <div class="p-6 bg-white rounded-3xl border-4 border-blue-50 shadow-md animate-fade-in">
+                    <p class="content-text mb-6 whitespace-pre-wrap">${m.text}</p>
+                    <div class="flex justify-between items-center pt-4 border-t-2 border-gray-100">
+                        <span class="time-tag">日期：${m.time}</span>
+                        <button onclick="deleteItem('memo', ${m.id})" class="btn-delete">刪除內容</button>
                     </div>
                 </div>
-            `).join('') || '<div class="py-20 text-center text-gray-300 text-xs font-bold">目前沒有備忘紀錄</div>';
+            `).join('') || '<div class="py-20 text-center text-gray-400 text-xl font-black">目前還沒寫任何內容</div>';
         }
 
         // --- 個人電話簿邏輯 ---
@@ -222,19 +262,19 @@
             const list = document.getElementById('contacts-list');
             const contacts = JSON.parse(localStorage.getItem(CONTACTS_KEY) || '[]');
             list.innerHTML = contacts.map(c => `
-                <div class="flex justify-between items-center p-5 bg-indigo-50/40 rounded-2xl border-2 border-indigo-100 shadow-sm animate-fade-in">
+                <div class="flex justify-between items-center p-6 bg-blue-50/50 rounded-3xl border-4 border-blue-100 shadow-sm animate-fade-in">
                     <div>
-                        <div class="text-base font-bold text-gray-900">${c.name}</div>
-                        <div class="text-sm text-indigo-700 font-mono font-black mt-1 tracking-wide">${c.phone}</div>
+                        <div class="contact-name">${c.name}</div>
+                        <div class="contact-phone mt-1 tracking-wider">${c.phone}</div>
                     </div>
                     <button onclick="deleteItem('contact', ${c.id})" class="btn-delete">刪除</button>
                 </div>
-            `).join('') || '<div class="py-20 text-center text-gray-300 text-xs font-bold">電話簿目前是空的</div>';
+            `).join('') || '<div class="py-20 text-center text-gray-400 text-xl font-black">電話簿目前空空的</div>';
         }
 
         // --- 刪除功能 ---
         window.deleteItem = (type, id) => {
-            if (!confirm("確定要刪除這筆紀錄嗎？操作不可還原。")) return;
+            if (!confirm("確定要刪除嗎？刪掉後找不回來喔！")) return;
             const key = type === 'memo' ? MEMO_KEY : CONTACTS_KEY;
             let items = JSON.parse(localStorage.getItem(key) || '[]');
             items = items.filter(i => i.id !== id);
@@ -247,7 +287,6 @@
             const now = new Date();
             const y = now.getFullYear(), m = now.getMonth(), d = now.getDate();
             
-            // 更新時鐘
             const clockEl = document.getElementById('clock');
             const updateClock = () => { 
                 if(clockEl) clockEl.textContent = new Date().toTimeString().split(' ')[0]; 
@@ -255,13 +294,11 @@
             setInterval(updateClock, 1000);
             updateClock();
 
-            // 更新日期與農曆
             document.getElementById('date-display').textContent = now.toLocaleDateString('zh-TW', { weekday: 'long', month: 'long', day: 'numeric' });
             const lun = calculateLunar(y, m, d);
             document.getElementById('lunar-display-top').textContent = `農曆 ${lun.month}${lun.day}`;
             document.getElementById('calendar-month').textContent = `${y}年 ${m + 1}月`;
 
-            // 繪製日曆
             const grid = document.getElementById('calendar-grid');
             if(grid) {
                 const firstDay = new Date(y, m, 1).getDay();
@@ -271,22 +308,20 @@
                 for (let i = 1; i <= totalDays; i++) {
                     const l = calculateLunar(y, m, i);
                     const isToday = i === d;
-                    const activeClass = isToday ? 'bg-blue-600 text-white rounded-2xl shadow-lg scale-110 z-10' : 'text-gray-700 hover:bg-gray-100 rounded-xl';
+                    const activeClass = isToday ? 'bg-blue-700 text-white rounded-2xl shadow-xl scale-110 z-10 border-2 border-white' : 'text-gray-900 border border-gray-100';
                     html += `
-                        <div class="calendar-day ${activeClass} py-1 transition-all">
-                            <span class="text-xs font-bold">${i}</span>
-                            <span class="text-[8px] ${isToday ? 'text-blue-100' : 'text-gray-400'}">${l.day}</span>
+                        <div class="calendar-day ${activeClass} transition-all">
+                            <span class="text-lg font-black">${i}</span>
+                            <span class="text-[10px] ${isToday ? 'text-blue-100' : 'text-blue-600'} font-bold">${l.day}</span>
                         </div>
                     `;
                 }
                 grid.innerHTML = html;
             }
 
-            // 更新運勢
-            const fortunes = ["宜學習，今日靈感滿分。", "宜出遊，心情會豁然開朗。", "宜收納，整理環境帶動好運。", "宜沉思，適合計畫未來。", "宜運動，釋放壓力迎接好運。"];
+            const fortunes = ["宜保持愉快心情。", "適合去公園散散步。", "整理房間，迎接福氣。", "打個電話跟老友聊聊。", "適合吃點營養好吃的。"];
             document.getElementById('fortune-text').textContent = fortunes[d % fortunes.length];
             
-            // 初次渲染列表
             renderMemos();
             renderContacts();
         };
