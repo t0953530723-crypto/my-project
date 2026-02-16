@@ -14,6 +14,11 @@
         @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
         .fortune-card { background: linear-gradient(135deg, #fff5f5 0%, #fff0f0 100%); border: 1px solid #fee2e2; }
         .calendar-day { min-height: 50px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        /* 強化刪除按鈕視覺 */
+        .btn-delete { color: #ef4444; font-weight: 800; background-color: #fef2f2; border: 1px solid #fee2e2; padding: 4px 12px; border-radius: 8px; font-size: 12px; transition: all 0.2s; }
+        .btn-delete:active { background-color: #fee2e2; transform: scale(0.95); }
+        /* 強化時間標籤 */
+        .time-tag { color: #374151; font-weight: 600; background-color: #f3f4f6; padding: 2px 8px; border-radius: 6px; font-size: 11px; border: 1px solid #e5e7eb; }
     </style>
 </head>
 <body class="p-4 flex flex-col justify-start items-center min-h-screen">
@@ -22,8 +27,8 @@
         <!-- Header -->
         <div class="bg-gradient-to-br from-blue-600 to-violet-700 p-8 text-white text-center">
             <div id="clock" class="text-5xl font-bold font-mono mb-2">00:00:00</div>
-            <div id="date-display" class="text-sm opacity-80 font-medium">載入中...</div>
-            <div id="lunar-display-top" class="text-xs mt-1 text-yellow-200">農曆 載入中...</div>
+            <div id="date-display" class="text-sm opacity-80 font-medium">系統讀取中...</div>
+            <div id="lunar-display-top" class="text-xs mt-1 text-yellow-200">農曆讀取中...</div>
             <div id="storage-status" class="mt-4 text-[10px] opacity-60 bg-black/20 py-1 px-3 rounded-full inline-block">本地儲存模式</div>
         </div>
 
@@ -38,7 +43,7 @@
             <!-- 日曆區塊 -->
             <section id="section-calendar" class="space-y-6 animate-fade-in">
                 <div class="flex justify-between items-center">
-                    <h2 class="text-xl font-black text-gray-800" id="calendar-month">----年 --月</h2>
+                    <h2 class="text-xl font-black text-gray-800" id="calendar-month">讀取中...</h2>
                 </div>
                 <div class="bg-gray-50 rounded-3xl p-4 border border-gray-100">
                     <div class="grid grid-cols-7 gap-1 text-center mb-2">
@@ -58,7 +63,7 @@
                         <span class="text-red-600 font-bold text-sm">今日運勢</span>
                         <span class="text-[10px] px-2 py-1 bg-red-100 text-red-600 rounded-full font-bold">每日占卜</span>
                     </div>
-                    <div id="fortune-text" class="text-gray-700 text-sm leading-relaxed font-medium">載入中...</div>
+                    <div id="fortune-text" class="text-gray-700 text-sm leading-relaxed font-medium">正在為您求籤...</div>
                     <div class="grid grid-cols-2 gap-2 mt-2">
                         <div class="bg-green-50 p-2 rounded-xl border border-green-100">
                             <span class="text-[10px] text-green-600 font-bold block">【宜】</span>
@@ -76,12 +81,12 @@
             <section id="section-memo" class="hidden space-y-4 animate-fade-in">
                 <div class="flex bg-gray-100 p-1 rounded-xl">
                     <button onclick="switchSubTab('memo', 'edit')" id="memo-sub-edit" class="flex-1 py-2 text-xs font-bold rounded-lg sub-tab-active">新增備忘</button>
-                    <button onclick="switchSubTab('memo', 'view')" id="memo-sub-view" class="flex-1 py-2 text-xs font-bold rounded-lg text-gray-500">備忘清單</button>
+                    <button onclick="switchSubTab('memo', 'view')" id="memo-sub-view" class="flex-1 py-2 text-xs font-bold rounded-lg text-gray-500">查看清單</button>
                 </div>
                 <div id="memo-view-edit">
                     <textarea id="memo-input" placeholder="寫點什麼想保存的事..." rows="5" class="w-full p-4 bg-gray-50 rounded-2xl border-none text-sm outline-none resize-none mb-4"></textarea>
                     <div class="grid grid-cols-2 gap-3">
-                        <button onclick="clearMemoInput()" class="bg-gray-200 text-gray-600 py-4 rounded-2xl font-bold active:scale-95">清空文字</button>
+                        <button onclick="clearMemoInput()" class="bg-gray-200 text-gray-600 py-4 rounded-2xl font-bold active:scale-95">一鍵清空</button>
                         <button onclick="saveMemo()" class="bg-blue-600 text-white py-4 rounded-2xl font-bold active:scale-95 shadow-lg shadow-blue-100">儲存備忘</button>
                     </div>
                 </div>
@@ -94,13 +99,13 @@
             <section id="section-contacts" class="hidden space-y-4 animate-fade-in">
                 <div class="flex bg-gray-100 p-1 rounded-xl">
                     <button onclick="switchSubTab('contacts', 'edit')" id="contacts-sub-edit" class="flex-1 py-2 text-xs font-bold rounded-lg sub-tab-active">新增聯絡人</button>
-                    <button onclick="switchSubTab('contacts', 'view')" id="contacts-sub-view" class="flex-1 py-2 text-xs font-bold rounded-lg text-gray-500">通訊名單</button>
+                    <button onclick="switchSubTab('contacts', 'view')" id="contacts-sub-view" class="flex-1 py-2 text-xs font-bold rounded-lg text-gray-500">查看名單</button>
                 </div>
                 <div id="contacts-view-edit" class="space-y-4">
                     <input type="text" id="contact-name" placeholder="姓名" class="w-full p-4 bg-gray-50 rounded-xl border-none text-sm outline-none">
                     <input type="tel" id="contact-phone" placeholder="電話" class="w-full p-4 bg-gray-50 rounded-xl border-none text-sm outline-none">
                     <div class="grid grid-cols-2 gap-3">
-                        <button onclick="clearContactInput()" class="bg-gray-200 text-gray-600 py-4 rounded-xl font-bold active:scale-95">清空文字</button>
+                        <button onclick="clearContactInput()" class="bg-gray-200 text-gray-600 py-4 rounded-xl font-bold active:scale-95">一鍵清空</button>
                         <button onclick="saveContact()" class="bg-indigo-600 text-white py-4 rounded-xl font-bold active:scale-95 shadow-lg shadow-indigo-100">儲存資訊</button>
                     </div>
                 </div>
@@ -118,17 +123,24 @@
 
         // --- 全域 UI 切換 ---
         window.switchTab = (tab) => {
-            ['calendar', 'memo', 'contacts'].forEach(t => {
-                document.getElementById(`section-${t}`).classList.add('hidden');
-                document.getElementById(`tab-${t}`).classList.replace('tab-active', 'text-gray-400');
+            const sections = ['calendar', 'memo', 'contacts'];
+            sections.forEach(t => {
+                const el = document.getElementById(`section-${t}`);
+                const tabBtn = document.getElementById(`tab-${t}`);
+                if (el) el.classList.add('hidden');
+                if (tabBtn) tabBtn.classList.replace('tab-active', 'text-gray-400');
             });
-            document.getElementById(`section-${tab}`).classList.remove('hidden');
-            document.getElementById(`tab-${tab}`).classList.replace('text-gray-400', 'tab-active');
+            const targetEl = document.getElementById(`section-${tab}`);
+            const targetBtn = document.getElementById(`tab-${tab}`);
+            if (targetEl) targetEl.classList.remove('hidden');
+            if (targetBtn) targetBtn.classList.replace('text-gray-400', 'tab-active');
         };
 
         window.switchSubTab = (p, v) => {
             const eBtn = document.getElementById(`${p}-sub-edit`), vBtn = document.getElementById(`${p}-sub-view`);
             const eA = document.getElementById(`${p}-view-edit`), vA = document.getElementById(`${p}-view-view`);
+            if (!eBtn || !vBtn || !eA || !vA) return;
+
             if (v === 'edit') {
                 eBtn.className = "flex-1 py-2 text-xs font-bold rounded-lg sub-tab-active";
                 vBtn.className = "flex-1 py-2 text-xs font-bold rounded-lg text-gray-500";
@@ -143,9 +155,7 @@
         };
 
         // --- 清空功能 ---
-        window.clearMemoInput = () => {
-            document.getElementById('memo-input').value = "";
-        };
+        window.clearMemoInput = () => document.getElementById('memo-input').value = "";
         window.clearContactInput = () => {
             document.getElementById('contact-name').value = "";
             document.getElementById('contact-phone').value = "";
@@ -156,66 +166,75 @@
         const lunarDays = ["初一", "初二", "初三", "初四", "初五", "初六", "初七", "初八", "初九", "初十", "十一", "十二", "十三", "十四", "十五", "十六", "十七", "十八", "十九", "廿十", "廿一", "廿二", "廿三", "廿四", "廿五", "廿六", "廿七", "廿八", "廿九", "三十"];
         
         function calculateLunar(year, month, day) {
-            const baseDate = new Date(2024, 1, 10);
-            const targetDate = new Date(year, month, day);
-            const diffDays = Math.floor((targetDate - baseDate) / (24 * 3600 * 1000));
-            let cycleDays = diffDays % 354; 
-            if (cycleDays < 0) cycleDays += 354;
-            return { month: lunarMonths[Math.floor(cycleDays / 29.5) % 12], day: lunarDays[Math.floor(cycleDays % 29.5) % 30] };
+            try {
+                const baseDate = new Date(2024, 1, 10);
+                const targetDate = new Date(year, month, day);
+                const diffDays = Math.floor((targetDate - baseDate) / (24 * 3600 * 1000));
+                let cycleDays = diffDays % 354; 
+                if (cycleDays < 0) cycleDays += 354;
+                return { month: lunarMonths[Math.floor(cycleDays / 29.5) % 12], day: lunarDays[Math.floor(cycleDays % 29.5) % 30] };
+            } catch(e) {
+                return { month: "正月", day: "初一" };
+            }
         }
 
         // --- 生活備忘錄邏輯 ---
         window.saveMemo = () => {
-            const text = document.getElementById('memo-input').value.trim();
+            const input = document.getElementById('memo-input');
+            const text = input.value.trim();
             if (!text) return;
             const memos = JSON.parse(localStorage.getItem(MEMO_KEY) || '[]');
-            memos.unshift({ id: Date.now(), text, time: new Date().toLocaleString() });
+            memos.unshift({ id: Date.now(), text, time: new Date().toLocaleString('zh-TW') });
             localStorage.setItem(MEMO_KEY, JSON.stringify(memos));
-            clearMemoInput();
+            input.value = "";
             switchSubTab('memo', 'view');
         };
 
         function renderMemos() {
+            const list = document.getElementById('memo-list');
             const memos = JSON.parse(localStorage.getItem(MEMO_KEY) || '[]');
-            document.getElementById('memo-list').innerHTML = memos.map(m => `
+            list.innerHTML = memos.map(m => `
                 <div class="p-5 bg-white rounded-2xl border-2 border-gray-100 shadow-sm animate-fade-in">
-                    <p class="text-[15px] text-gray-800 font-medium leading-relaxed mb-4">${m.text}</p>
-                    <div class="flex justify-between items-center pt-3 border-t border-gray-50">
-                        <span class="text-[10px] text-gray-500 font-bold bg-gray-100 px-2 py-1 rounded-md">儲存：${m.time}</span>
-                        <button onclick="deleteItem('memo', ${m.id})" class="text-red-500 text-xs font-bold hover:underline px-2 py-1 bg-red-50 rounded-lg">刪除紀錄</button>
+                    <p class="text-[15px] text-gray-800 font-medium leading-relaxed mb-4 whitespace-pre-wrap">${m.text}</p>
+                    <div class="flex justify-between items-center pt-3 border-t border-gray-100">
+                        <span class="time-tag">儲存：${m.time}</span>
+                        <button onclick="deleteItem('memo', ${m.id})" class="btn-delete">刪除紀錄</button>
                     </div>
                 </div>
-            `).join('') || '<div class="py-20 text-center text-gray-300 text-xs">尚無備忘紀錄</div>';
+            `).join('') || '<div class="py-20 text-center text-gray-300 text-xs font-bold">目前沒有備忘紀錄</div>';
         }
 
         // --- 個人電話簿邏輯 ---
         window.saveContact = () => {
-            const name = document.getElementById('contact-name').value.trim();
-            const phone = document.getElementById('contact-phone').value.trim();
+            const nInput = document.getElementById('contact-name');
+            const pInput = document.getElementById('contact-phone');
+            const name = nInput.value.trim();
+            const phone = pInput.value.trim();
             if (!name || !phone) return;
             const contacts = JSON.parse(localStorage.getItem(CONTACTS_KEY) || '[]');
             contacts.unshift({ id: Date.now(), name, phone });
             localStorage.setItem(CONTACTS_KEY, JSON.stringify(contacts));
-            clearContactInput();
+            nInput.value = ""; pInput.value = "";
             switchSubTab('contacts', 'view');
         };
 
         function renderContacts() {
+            const list = document.getElementById('contacts-list');
             const contacts = JSON.parse(localStorage.getItem(CONTACTS_KEY) || '[]');
-            document.getElementById('contacts-list').innerHTML = contacts.map(c => `
+            list.innerHTML = contacts.map(c => `
                 <div class="flex justify-between items-center p-5 bg-indigo-50/40 rounded-2xl border-2 border-indigo-100 shadow-sm animate-fade-in">
                     <div>
                         <div class="text-base font-bold text-gray-900">${c.name}</div>
-                        <div class="text-sm text-indigo-600 font-mono font-bold mt-1">${c.phone}</div>
+                        <div class="text-sm text-indigo-700 font-mono font-black mt-1 tracking-wide">${c.phone}</div>
                     </div>
-                    <button onclick="deleteItem('contact', ${c.id})" class="text-red-500 text-xs font-bold bg-white px-3 py-2 rounded-xl shadow-sm border border-red-100">刪除</button>
+                    <button onclick="deleteItem('contact', ${c.id})" class="btn-delete">刪除</button>
                 </div>
-            `).join('') || '<div class="py-20 text-center text-gray-300 text-xs">通訊錄空空如也</div>';
+            `).join('') || '<div class="py-20 text-center text-gray-300 text-xs font-bold">電話簿目前是空的</div>';
         }
 
         // --- 刪除功能 ---
         window.deleteItem = (type, id) => {
-            if (!confirm("確定要刪除這筆紀錄嗎？")) return;
+            if (!confirm("確定要刪除這筆紀錄嗎？操作不可還原。")) return;
             const key = type === 'memo' ? MEMO_KEY : CONTACTS_KEY;
             let items = JSON.parse(localStorage.getItem(key) || '[]');
             items = items.filter(i => i.id !== id);
@@ -223,33 +242,54 @@
             type === 'memo' ? renderMemos() : renderContacts();
         };
 
-        // --- 初始化 ---
-        const init = () => {
+        // --- 核心初始化函式 ---
+        window.onload = function() {
             const now = new Date();
             const y = now.getFullYear(), m = now.getMonth(), d = now.getDate();
-            const updateClock = () => { document.getElementById('clock').textContent = new Date().toTimeString().split(' ')[0]; };
+            
+            // 更新時鐘
+            const clockEl = document.getElementById('clock');
+            const updateClock = () => { 
+                if(clockEl) clockEl.textContent = new Date().toTimeString().split(' ')[0]; 
+            };
             setInterval(updateClock, 1000);
             updateClock();
+
+            // 更新日期與農曆
             document.getElementById('date-display').textContent = now.toLocaleDateString('zh-TW', { weekday: 'long', month: 'long', day: 'numeric' });
             const lun = calculateLunar(y, m, d);
             document.getElementById('lunar-display-top').textContent = `農曆 ${lun.month}${lun.day}`;
             document.getElementById('calendar-month').textContent = `${y}年 ${m + 1}月`;
+
+            // 繪製日曆
             const grid = document.getElementById('calendar-grid');
-            const firstDay = new Date(y, m, 1).getDay();
-            const totalDays = new Date(y, m + 1, 0).getDate();
-            grid.innerHTML = "";
-            for (let i = 0; i < firstDay; i++) grid.innerHTML += `<div></div>`;
-            for (let i = 1; i <= totalDays; i++) {
-                const l = calculateLunar(y, m, i);
-                const active = i === d ? 'bg-blue-600 text-white rounded-2xl shadow-lg' : 'text-gray-700';
-                grid.innerHTML += `<div class="calendar-day ${active} py-1"><span class="text-xs font-bold">${i}</span><span class="text-[8px] ${i === d ? 'text-blue-100' : 'text-gray-400'}">${l.day}</span></div>`;
+            if(grid) {
+                const firstDay = new Date(y, m, 1).getDay();
+                const totalDays = new Date(y, m + 1, 0).getDate();
+                let html = "";
+                for (let i = 0; i < firstDay; i++) html += `<div></div>`;
+                for (let i = 1; i <= totalDays; i++) {
+                    const l = calculateLunar(y, m, i);
+                    const isToday = i === d;
+                    const activeClass = isToday ? 'bg-blue-600 text-white rounded-2xl shadow-lg scale-110 z-10' : 'text-gray-700 hover:bg-gray-100 rounded-xl';
+                    html += `
+                        <div class="calendar-day ${activeClass} py-1 transition-all">
+                            <span class="text-xs font-bold">${i}</span>
+                            <span class="text-[8px] ${isToday ? 'text-blue-100' : 'text-gray-400'}">${l.day}</span>
+                        </div>
+                    `;
+                }
+                grid.innerHTML = html;
             }
-            const fortunes = ["宜學習，今日靈感滿分。", "宜出遊，心情會豁然開朗。", "宜收納，整理環境帶動好運。", "宜沉思，適合計畫未來。"];
+
+            // 更新運勢
+            const fortunes = ["宜學習，今日靈感滿分。", "宜出遊，心情會豁然開朗。", "宜收納，整理環境帶動好運。", "宜沉思，適合計畫未來。", "宜運動，釋放壓力迎接好運。"];
             document.getElementById('fortune-text').textContent = fortunes[d % fortunes.length];
+            
+            // 初次渲染列表
             renderMemos();
             renderContacts();
         };
-        init();
     </script>
 </body>
 </html>
