@@ -3,327 +3,388 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>萬用生活助手 - 敬老高清版</title>
+    <title>萬用生活助手 - 舒視護眼版</title>
     
-    <!-- Web App 桌面化優化標籤 -->
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="生活助手">
-    <meta name="mobile-web-app-capable" content="yes">
-    <meta name="theme-color" content="#2563eb">
-
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@500;700;900&display=swap');
+        
+        /* 採用模擬紙張質感的暖灰色背景，極致護眼 */
         body { 
             font-family: 'Noto Sans TC', sans-serif; 
-            background-color: #f1f5f9; 
+            background-color: #f0f0eb; 
             -webkit-tap-highlight-color: transparent;
-            -webkit-user-select: none;
             user-select: none;
-            font-size: 18px; /* 全局基礎字體放大 */
+            font-size: 24px;
+            color: #1a202c;
         }
-        /* 讓輸入框可以選取與輸入 */
-        input, textarea { -webkit-user-select: text; user-select: text; }
         
-        .tab-active { border-bottom: 5px solid #2563eb; color: #1e40af; background-color: #f8fafc; }
-        .sub-tab-active { background-color: #2563eb; color: white; box-shadow: 0 6px 15px -3px rgba(37, 99, 235, 0.4); }
-        .animate-fade-in { animation: fadeIn 0.4s ease-out; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .tab-active { 
+            border-bottom: 8px solid #1e3a8a; 
+            color: #1e3a8a; 
+            background-color: #fdfdfb; 
+        }
         
-        .fortune-card { background: linear-gradient(135deg, #fffaf0 0%, #fff5e6 100%); border: 2px solid #fbbf24; }
-        .calendar-day { min-height: 60px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        /* 日曆格樣式 */
+        .calendar-day { 
+            min-height: 130px; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: flex-start; 
+            padding: 12px 2px;
+            cursor: pointer; 
+            position: relative; 
+            border-radius: 20px; 
+            transition: all 0.2s ease;
+            background-color: #fcfcf9;
+            border: 1px solid #dcdcdc;
+        }
         
-        /* 長輩版專屬大按鈕 */
-        .btn-large { padding: 18px; border-radius: 20px; font-size: 20px; font-weight: 900; transition: all 0.2s; }
-        
-        /* 強化刪除按鈕視覺 - 字體加大 */
-        .btn-delete { color: #dc2626; font-weight: 900; background-color: #fee2e2; border: 2px solid #fecaca; padding: 6px 16px; border-radius: 12px; font-size: 16px; }
-        .btn-delete:active { background-color: #fecaca; transform: scale(0.95); }
-        
-        /* 強化時間標籤 - 更清晰 */
-        .time-tag { color: #1f2937; font-weight: 700; background-color: #e5e7eb; padding: 4px 10px; border-radius: 8px; font-size: 14px; border: 1.5px solid #d1d5db; }
+        .day-number { 
+            font-size: 38px; 
+            font-weight: 900; 
+            line-height: 1; 
+            margin-bottom: 6px; 
+            color: #111827; 
+        }
+        .is-weekend .day-number { color: #c2410c; }
+        .lunar-text { font-size: 16px; font-weight: 700; color: #71717a; }
 
-        /* 內容字體強化 */
-        .content-text { font-size: 20px; line-height: 1.6; font-weight: 700; color: #111827; }
-        .contact-name { font-size: 24px; font-weight: 900; color: #000; }
-        .contact-phone { font-size: 22px; font-weight: 800; color: #2563eb; }
+        .holiday-tag { 
+            font-size: 14px; 
+            color: #ffffff; 
+            font-weight: 900; 
+            background-color: #9f1239; 
+            padding: 4px 8px;
+            border-radius: 8px;
+            margin-top: 6px;
+            text-align: center;
+            width: 92%;
+            white-space: nowrap;
+            overflow: hidden;
+        }
+        
+        .today-mark { 
+            background-color: #fef3c7 !important; 
+            border: 5px solid #d97706 !important; 
+        }
+
+        .selected-day:not(.today-mark) { 
+            background-color: #eff6ff; 
+            border: 4px solid #1d4ed8; 
+        }
+
+        /* 左右箭頭導航按鈕 */
+        .btn-nav { 
+            background-color: #fcfcf9; 
+            width: 80px;
+            height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 28px; 
+            font-size: 40px; 
+            border: 3px solid #cbd5e1; 
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05); 
+            color: #1e3a8a;
+        }
+        
+        .event-dot { 
+            width: 12px; 
+            height: 12px; 
+            background-color: #2563eb; 
+            border-radius: 50%; 
+            margin-top: 8px; 
+            border: 2px solid white;
+        }
+        
+        .card { 
+            background: #fcfcf9; 
+            border-radius: 2.5rem; 
+            padding: 2rem; 
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05); 
+            border: 2px solid #e2e8f0; 
+        }
+        
+        .input-box { 
+            background: #fdfdfb; 
+            border: 4px solid #cbd5e1; 
+            border-radius: 2rem; 
+            padding: 1.2rem; 
+            font-size: 1.8rem; 
+            font-weight: bold; 
+            width: 100%; 
+        }
     </style>
 </head>
-<body class="p-2 md:p-4 flex flex-col justify-start items-center min-h-screen">
+<body class="p-2 md:p-6 flex flex-col items-center min-h-screen">
 
-    <div class="max-w-[480px] w-full bg-white rounded-[3rem] shadow-2xl overflow-hidden relative border-4 border-gray-200">
-        <!-- Header - 更顯眼 -->
-        <div class="bg-gradient-to-br from-blue-700 to-indigo-800 p-8 text-white text-center">
-            <div id="clock" class="text-6xl font-black font-mono mb-2 tracking-tighter">00:00:00</div>
-            <div id="date-display" class="text-xl font-bold mb-1">系統讀取中...</div>
-            <div id="lunar-display-top" class="text-lg text-yellow-300 font-bold">農曆讀取中...</div>
+    <div class="max-w-[550px] w-full bg-[#fdfdfb] rounded-[4rem] shadow-2xl overflow-hidden border-8 border-white">
+        <!-- 上方：柔和深藍色時間區 -->
+        <div class="bg-[#1e293b] p-10 text-white text-center">
+            <div id="clock" class="text-7xl font-black font-mono mb-4 tracking-tighter text-[#fbbf24]">00:00:00</div>
+            <div id="date-now" class="text-3xl font-bold">...</div>
+            <div id="lunar-now" class="text-2xl text-blue-200 font-bold mt-2">...</div>
         </div>
 
-        <!-- 主導覽 - 文字加大 -->
-        <nav class="flex border-b-2 bg-gray-50">
-            <button onclick="switchTab('calendar')" id="tab-calendar" class="flex-1 py-5 text-lg font-black tab-active">日曆運勢</button>
-            <button onclick="switchTab('memo')" id="tab-memo" class="flex-1 py-5 text-lg font-black text-gray-500">生活備忘</button>
-            <button onclick="switchTab('contacts')" id="tab-contacts" class="flex-1 py-5 text-lg font-black text-gray-500">電話簿</button>
+        <!-- 導航切換 -->
+        <nav class="flex border-b-8 border-[#f0f0eb] bg-[#f8f8f4]">
+            <button onclick="switchTab('calendar')" id="tab-calendar" class="flex-1 py-8 text-2xl font-black tab-active">看日曆</button>
+            <button onclick="switchTab('contacts')" id="tab-contacts" class="flex-1 py-8 text-2xl font-black text-gray-400">電話簿</button>
+            <button onclick="switchTab('memo')" id="tab-memo" class="flex-1 py-8 text-2xl font-black text-gray-400">記事本</button>
         </nav>
 
-        <main class="p-6 min-h-[550px] bg-white">
-            <!-- 日曆區塊 -->
-            <section id="section-calendar" class="space-y-6 animate-fade-in">
-                <div class="flex justify-center items-center">
-                    <h2 class="text-2xl font-black text-blue-900 bg-blue-50 px-6 py-2 rounded-full" id="calendar-month">讀取中...</h2>
+        <main class="p-6 bg-[#fdfdfb] min-h-[700px]">
+            <!-- 日曆區 -->
+            <section id="section-calendar" class="space-y-8">
+                <div class="flex justify-between items-center px-2">
+                    <button onclick="changeMonth(-1)" class="btn-nav">⬅️</button>
+                    <h2 class="text-4xl font-black text-slate-800" id="calendar-month">...</h2>
+                    <button onclick="changeMonth(1)" class="btn-nav">➡️</button>
                 </div>
-                <div class="bg-white rounded-3xl p-4 border-2 border-gray-200 shadow-inner">
-                    <div class="grid grid-cols-7 gap-1 text-center mb-3">
-                        <div class="text-sm font-black text-red-500">日</div>
-                        <div class="text-sm font-black text-gray-600">一</div>
-                        <div class="text-sm font-black text-gray-600">二</div>
-                        <div class="text-sm font-black text-gray-600">三</div>
-                        <div class="text-sm font-black text-gray-600">四</div>
-                        <div class="text-sm font-black text-gray-600">五</div>
-                        <div class="text-sm font-black text-gray-800">六</div>
-                    </div>
-                    <div id="calendar-grid" class="grid grid-cols-7 gap-2 text-center"></div>
+
+                <div class="grid grid-cols-7 gap-2 text-center mb-2">
+                    <div class="py-2 text-xl font-black text-orange-700">日</div>
+                    <div class="py-2 text-xl font-black text-slate-400">一</div>
+                    <div class="py-2 text-xl font-black text-slate-400">二</div>
+                    <div class="py-2 text-xl font-black text-slate-400">三</div>
+                    <div class="py-2 text-xl font-black text-slate-400">四</div>
+                    <div class="py-2 text-xl font-black text-slate-400">五</div>
+                    <div class="py-2 text-xl font-black text-blue-800">六</div>
                 </div>
-                <!-- 運勢卡片 - 高對比度 -->
-                <div class="fortune-card rounded-3xl p-6 space-y-4">
-                    <div class="flex items-center justify-between">
-                        <span class="text-red-700 font-black text-xl">今日運勢</span>
-                        <span class="text-sm px-3 py-1 bg-red-600 text-white rounded-lg font-bold">指引</span>
-                    </div>
-                    <div id="fortune-text" class="text-gray-900 text-xl leading-relaxed font-black">正在為您求籤...</div>
-                    <div class="grid grid-cols-2 gap-3 mt-2">
-                        <div class="bg-white p-3 rounded-2xl border-2 border-green-200">
-                            <span class="text-sm text-green-700 font-black block mb-1">【宜】</span>
-                            <span id="fortune-suit" class="text-base text-gray-900 font-bold">讀書、會友</span>
-                        </div>
-                        <div class="bg-white p-3 rounded-2xl border-2 border-red-200">
-                            <span class="text-sm text-red-700 font-black block mb-1">【忌】</span>
-                            <span id="fortune-avoid" class="text-base text-gray-900 font-bold">爭執、遠行</span>
-                        </div>
-                    </div>
+                <div id="calendar-grid" class="grid grid-cols-7 gap-2"></div>
+
+                <div id="selected-info" class="card">
+                    <div id="selected-date-title" class="text-slate-900 font-black text-3xl border-b-4 border-slate-100 pb-3 mb-6">點選日期看詳細</div>
+                    <div id="selected-date-events" class="space-y-4 text-2xl font-bold"></div>
                 </div>
             </section>
 
-            <!-- 生活備忘錄區塊 -->
-            <section id="section-memo" class="hidden space-y-6 animate-fade-in">
-                <div class="flex bg-gray-200 p-1.5 rounded-2xl">
-                    <button onclick="switchSubTab('memo', 'edit')" id="memo-sub-edit" class="flex-1 py-3 text-lg font-black rounded-xl sub-tab-active">新增內容</button>
-                    <button onclick="switchSubTab('memo', 'view')" id="memo-sub-view" class="flex-1 py-3 text-lg font-black rounded-xl text-gray-600">查看紀錄</button>
+            <!-- 電話簿區：已移除撥號功能 -->
+            <section id="section-contacts" class="hidden space-y-6">
+                <div class="space-y-4">
+                    <input id="contact-name" placeholder="姓名 (如：二女兒)" class="input-box">
+                    <input id="contact-phone" placeholder="電話 (僅供記錄)" class="input-box" type="tel">
                 </div>
-                <div id="memo-view-edit">
-                    <textarea id="memo-input" placeholder="在這裡寫字，會自動保存..." rows="6" class="w-full p-5 bg-gray-50 rounded-3xl border-2 border-gray-200 text-xl font-bold outline-none resize-none mb-6 focus:border-blue-500"></textarea>
-                    <div class="grid grid-cols-2 gap-4">
-                        <button onclick="clearMemoInput()" class="bg-gray-200 text-gray-700 btn-large active:scale-95">清除內容</button>
-                        <button onclick="saveMemo()" class="bg-blue-600 text-white btn-large active:scale-95 shadow-lg">儲存起來</button>
-                    </div>
+                <button onclick="addContact()" class="w-full bg-green-800 text-white p-6 rounded-3xl text-3xl font-black shadow-xl">存入記事</button>
+                
+                <div class="bg-amber-50 border-2 border-amber-200 p-4 rounded-2xl text-amber-800 text-lg font-bold">
+                    💡 提示：此處僅提供資料查詢，無法直接撥打電話，防止誤觸。
                 </div>
-                <div id="memo-view-view" class="hidden">
-                    <div id="memo-list" class="space-y-5"></div>
-                </div>
+
+                <div id="contact-list" class="space-y-4 pt-4"></div>
             </section>
 
-            <!-- 個人電話簿區塊 -->
-            <section id="section-contacts" class="hidden space-y-6 animate-fade-in">
-                <div class="flex bg-gray-200 p-1.5 rounded-2xl">
-                    <button onclick="switchSubTab('contacts', 'edit')" id="contacts-sub-edit" class="flex-1 py-3 text-lg font-black rounded-xl sub-tab-active">新增電話</button>
-                    <button onclick="switchSubTab('contacts', 'view')" id="contacts-sub-view" class="flex-1 py-3 text-lg font-black rounded-xl text-gray-600">我的聯絡人</button>
+            <!-- 記事本區 -->
+            <section id="section-memo" class="hidden space-y-6">
+                <div class="space-y-4">
+                    <label class="text-2xl font-black block">1. 選擇日子：</label>
+                    <input type="date" id="memo-date" class="input-box">
+                    <label class="text-2xl font-black block">2. 寫下要做的事：</label>
+                    <textarea id="memo-input" placeholder="例如：下午三點去打球..." rows="2" class="input-box"></textarea>
                 </div>
-                <div id="contacts-view-edit" class="space-y-5">
-                    <div class="space-y-2">
-                        <label class="font-black text-gray-700 ml-2">姓名：</label>
-                        <input type="text" id="contact-name" placeholder="請輸入姓名" class="w-full p-5 bg-gray-50 rounded-2xl border-2 border-gray-200 text-xl font-bold outline-none focus:border-indigo-500">
-                    </div>
-                    <div class="space-y-2">
-                        <label class="font-black text-gray-700 ml-2">電話：</label>
-                        <input type="tel" id="contact-phone" placeholder="請輸入電話號碼" class="w-full p-5 bg-gray-50 rounded-2xl border-2 border-gray-200 text-xl font-bold outline-none focus:border-indigo-500">
-                    </div>
-                    <div class="grid grid-cols-2 gap-4">
-                        <button onclick="clearContactInput()" class="bg-gray-200 text-gray-700 btn-large active:scale-95">清除</button>
-                        <button onclick="saveContact()" class="bg-indigo-700 text-white btn-large active:scale-95 shadow-lg">儲存電話</button>
-                    </div>
-                </div>
-                <div id="contacts-view-view" class="hidden">
-                    <div id="contacts-list" class="space-y-4"></div>
+                <button onclick="saveMemo()" class="w-full bg-blue-800 text-white p-6 rounded-3xl text-3xl font-black shadow-xl">儲存記事</button>
+                
+                <div class="pt-8 border-t-4 border-slate-100">
+                    <h3 class="text-2xl font-black text-slate-600 mb-6">📋 我的清單</h3>
+                    <div id="memo-list" class="space-y-4"></div>
                 </div>
             </section>
         </main>
     </div>
 
     <script>
-        // --- 核心變數 ---
-        const MEMO_KEY = 'my_assistant_memos';
-        const CONTACTS_KEY = 'my_assistant_contacts';
+        const MEMO_KEY = 'v7_memos_soft';
+        const CONTACT_KEY = 'v7_contacts_soft';
+        let currentMonthDate = new Date(); 
+        let selectedDate = new Date();
 
-        // --- 全域 UI 切換 ---
-        window.switchTab = (tab) => {
-            const sections = ['calendar', 'memo', 'contacts'];
-            sections.forEach(t => {
-                const el = document.getElementById(`section-${t}`);
-                const tabBtn = document.getElementById(`tab-${t}`);
-                if (el) el.classList.add('hidden');
-                if (tabBtn) {
-                    tabBtn.classList.remove('tab-active');
-                    tabBtn.classList.add('text-gray-500');
-                }
-            });
-            const targetEl = document.getElementById(`section-${tab}`);
-            const targetBtn = document.getElementById(`tab-${tab}`);
-            if (targetEl) targetEl.classList.remove('hidden');
-            if (targetBtn) {
-                targetBtn.classList.add('tab-active');
-                targetBtn.classList.remove('text-gray-500');
-            }
+        const SOLAR_HOLIDAYS = {
+            "1-1": "元旦", "2-28": "和平紀念日", "4-4": "兒童節", "4-5": "清明節",
+            "5-1": "勞動節", "8-8": "父親節", "9-28": "教師節", "10-10": "國慶日"
         };
 
-        window.switchSubTab = (p, v) => {
-            const eBtn = document.getElementById(`${p}-sub-edit`), vBtn = document.getElementById(`${p}-sub-view`);
-            const eA = document.getElementById(`${p}-view-edit`), vA = document.getElementById(`${p}-view-view`);
-            if (!eBtn || !vBtn || !eA || !vA) return;
+        function getLunarInfo(y, m, d) {
+            const baseDate = new Date(2026, 1, 17);
+            const targetDate = new Date(y, m, d);
+            const diffDays = Math.floor((targetDate - baseDate) / (1000 * 60 * 60 * 24));
+            const lunarCycle = 29.53059;
+            const totalLunarMonths = diffDays / lunarCycle;
+            const dayOfLunarMonth = Math.floor((totalLunarMonths - Math.floor(totalLunarMonths)) * lunarCycle) + 1;
+            const lunarMonth = (Math.floor(totalLunarMonths) % 12 + 1 + 12) % 12 || 12;
 
-            if (v === 'edit') {
-                eBtn.className = "flex-1 py-3 text-lg font-black rounded-xl sub-tab-active";
-                vBtn.className = "flex-1 py-3 text-lg font-black rounded-xl text-gray-600";
-                eA.classList.remove('hidden'); vA.classList.add('hidden');
-            } else {
-                vBtn.className = "flex-1 py-3 text-lg font-black rounded-xl sub-tab-active";
-                eBtn.className = "flex-1 py-3 text-lg font-black rounded-xl text-gray-600";
-                eA.classList.add('hidden'); vA.classList.remove('hidden');
-                if(p === 'memo') renderMemos();
-                if(p === 'contacts') renderContacts();
-            }
-        };
+            const lunarNames = ["初一", "初二", "初三", "初四", "初五", "初六", "初七", "初八", "初九", "初十", "十一", "十二", "十三", "十四", "十五", "十六", "十七", "十八", "十九", "廿十", "廿一", "廿二", "廿三", "廿四", "廿五", "廿六", "廿七", "廿八", "廿九", "三十"];
+            
+            let holidayName = SOLAR_HOLIDAYS[`${m+1}-${d}`] || "";
+            if (lunarMonth === 1 && dayOfLunarMonth === 1) holidayName = "春節";
+            else if (lunarMonth === 1 && dayOfLunarMonth === 2) holidayName = "初二";
+            else if (lunarMonth === 1 && dayOfLunarMonth === 3) holidayName = "初三";
+            else if (lunarMonth === 1 && dayOfLunarMonth === 15) holidayName = "元宵節";
+            else if (lunarMonth === 5 && dayOfLunarMonth === 5) holidayName = "端午節";
+            else if (lunarMonth === 8 && dayOfLunarMonth === 15) holidayName = "中秋節";
+            else if (lunarMonth === 9 && dayOfLunarMonth === 9) holidayName = "重陽節";
+            else if (lunarMonth === 12 && dayOfLunarMonth >= 29) holidayName = "除夕";
 
-        // --- 清空功能 ---
-        window.clearMemoInput = () => document.getElementById('memo-input').value = "";
-        window.clearContactInput = () => {
-            document.getElementById('contact-name').value = "";
-            document.getElementById('contact-phone').value = "";
-        };
+            return { text: lunarNames[dayOfLunarMonth - 1] || "初一", holiday: holidayName };
+        }
 
-        // --- 農曆算法 ---
-        const lunarMonths = ["正月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "冬月", "臘月"];
-        const lunarDays = ["初一", "初二", "初三", "初四", "初五", "初六", "初七", "初八", "初九", "初十", "十一", "十二", "十三", "十四", "十五", "十六", "十七", "十八", "十九", "廿十", "廿一", "廿二", "廿三", "廿四", "廿五", "廿六", "廿七", "廿八", "廿九", "三十"];
-        
-        function calculateLunar(year, month, day) {
-            try {
-                const baseDate = new Date(2024, 1, 10);
-                const targetDate = new Date(year, month, day);
-                const diffDays = Math.floor((targetDate - baseDate) / (24 * 3600 * 1000));
-                let cycleDays = diffDays % 354; 
-                if (cycleDays < 0) cycleDays += 354;
-                return { month: lunarMonths[Math.floor(cycleDays / 29.5) % 12], day: lunarDays[Math.floor(cycleDays % 29.5) % 30] };
-            } catch(e) {
-                return { month: "正月", day: "初一" };
+        function renderCalendar() {
+            const y = currentMonthDate.getFullYear(), m = currentMonthDate.getMonth();
+            const today = new Date();
+            document.getElementById('calendar-month').textContent = `${y}年 ${m + 1}月`;
+            const grid = document.getElementById('calendar-grid');
+            grid.innerHTML = "";
+            const firstDay = new Date(y, m, 1).getDay();
+            const totalDays = new Date(y, m + 1, 0).getDate();
+            for (let i = 0; i < firstDay; i++) grid.appendChild(document.createElement('div'));
+            const memos = JSON.parse(localStorage.getItem(MEMO_KEY) || '[]');
+            for (let i = 1; i <= totalDays; i++) {
+                const dateKeyStr = `${y}-${(m+1).toString().padStart(2, '0')}-${i.toString().padStart(2, '0')}`;
+                const dayOfWeek = new Date(y, m, i).getDay();
+                const isToday = today.getFullYear() === y && today.getMonth() === m && today.getDate() === i;
+                const isSelected = selectedDate.getFullYear() === y && selectedDate.getMonth() === m && selectedDate.getDate() === i;
+                const lunar = getLunarInfo(y, m, i);
+                const hasMemo = memos.some(memo => memo.date === dateKeyStr);
+                const dayEl = document.createElement('div');
+                dayEl.className = `calendar-day ${dayOfWeek === 0 || dayOfWeek === 6 ? 'is-weekend' : ''} ${isToday ? 'today-mark' : ''} ${isSelected ? 'selected-day' : ''}`;
+                dayEl.onclick = () => selectDay(y, m, i);
+                dayEl.innerHTML = `
+                    <span class="day-number">${i}</span>
+                    <span class="lunar-text">${lunar.text}</span>
+                    ${lunar.holiday ? `<span class="holiday-tag">${lunar.holiday}</span>` : ''}
+                    ${hasMemo ? `<div class="event-dot"></div>` : ''}
+                `;
+                grid.appendChild(dayEl);
             }
         }
 
-        // --- 生活備忘錄邏輯 ---
-        window.saveMemo = () => {
-            const input = document.getElementById('memo-input');
-            const text = input.value.trim();
-            if (!text) return;
-            const memos = JSON.parse(localStorage.getItem(MEMO_KEY) || '[]');
-            memos.unshift({ id: Date.now(), text, time: new Date().toLocaleString('zh-TW', { hour12: false }) });
-            localStorage.setItem(MEMO_KEY, JSON.stringify(memos));
-            input.value = "";
-            switchSubTab('memo', 'view');
-        };
+        function selectDay(y, m, d) {
+            selectedDate = new Date(y, m, d);
+            renderCalendar();
+            updateDetails();
+        }
 
-        function renderMemos() {
+        function updateDetails() {
+            const y = selectedDate.getFullYear(), m = selectedDate.getMonth(), d = selectedDate.getDate();
+            const dateKeyStr = `${y}-${(m+1).toString().padStart(2, '0')}-${d.toString().padStart(2, '0')}`;
+            const lunar = getLunarInfo(y, m, d);
+            document.getElementById('selected-date-title').textContent = `${m+1}月${d}日 (${lunar.text})`;
+            let html = "";
+            if (lunar.holiday) html += `<div class="bg-red-800 text-white p-5 rounded-2xl text-center shadow-md">🚩 節慶：${lunar.holiday}</div>`;
+            const memos = JSON.parse(localStorage.getItem(MEMO_KEY) || '[]');
+            const dayMemos = memos.filter(x => x.date === dateKeyStr);
+            if (dayMemos.length > 0) {
+                dayMemos.forEach(m => {
+                    html += `<div class="bg-white p-6 rounded-3xl border-l-[12px] border-blue-600 shadow-lg flex justify-between items-center">
+                        <span class="text-3xl">📝 ${m.text}</span>
+                        <button onclick="deleteMemo(${m.id})" class="text-red-400 p-2 text-2xl">❌</button>
+                    </div>`;
+                });
+            } else if (!lunar.holiday) {
+                html += `<div class="text-slate-400 italic text-center py-8">這天沒有記事。</div>`;
+            }
+            document.getElementById('selected-date-events').innerHTML = html;
+        }
+
+        function addContact() {
+            const name = document.getElementById('contact-name').value.trim();
+            const phone = document.getElementById('contact-phone').value.trim();
+            if (!name || !phone) return;
+            const contacts = JSON.parse(localStorage.getItem(CONTACT_KEY) || '[]');
+            contacts.push({ id: Date.now(), name, phone });
+            localStorage.setItem(CONTACT_KEY, JSON.stringify(contacts));
+            document.getElementById('contact-name').value = "";
+            document.getElementById('contact-phone').value = "";
+            renderContacts();
+        }
+
+        function renderContacts() {
+            const list = document.getElementById('contact-list');
+            const contacts = JSON.parse(localStorage.getItem(CONTACT_KEY) || '[]');
+            // 已修改：移除 <a> 標籤撥號連結，僅保留純文字與刪除功能
+            list.innerHTML = contacts.map(c => `
+                <div class="bg-white p-8 rounded-[2.5rem] border-2 border-slate-100 shadow flex justify-between items-center">
+                    <div>
+                        <div class="text-4xl font-black mb-1">${c.name}</div>
+                        <div class="text-slate-600 text-2xl font-bold font-mono">${c.phone}</div>
+                    </div>
+                    <button onclick="deleteContact(${c.id})" class="bg-slate-100 p-6 rounded-full text-3xl">🗑️</button>
+                </div>
+            `).join('') || '<div class="text-center text-slate-400 py-20">電話簿目前空的</div>';
+        }
+
+        function deleteContact(id) {
+            let contacts = JSON.parse(localStorage.getItem(CONTACT_KEY) || '[]');
+            contacts = contacts.filter(c => c.id !== id);
+            localStorage.setItem(CONTACT_KEY, JSON.stringify(contacts));
+            renderContacts();
+        }
+
+        function saveMemo() {
+            const dateInput = document.getElementById('memo-date');
+            const textInput = document.getElementById('memo-input');
+            if (!dateInput.value || !textInput.value.trim()) return;
+            const memos = JSON.parse(localStorage.getItem(MEMO_KEY) || '[]');
+            memos.unshift({ id: Date.now(), text: textInput.value, date: dateInput.value });
+            localStorage.setItem(MEMO_KEY, JSON.stringify(memos));
+            textInput.value = "";
+            renderCalendar(); updateDetails(); renderMemoList();
+            switchTab('calendar');
+        }
+
+        function renderMemoList() {
             const list = document.getElementById('memo-list');
             const memos = JSON.parse(localStorage.getItem(MEMO_KEY) || '[]');
             list.innerHTML = memos.map(m => `
-                <div class="p-6 bg-white rounded-3xl border-4 border-blue-50 shadow-md animate-fade-in">
-                    <p class="content-text mb-6 whitespace-pre-wrap">${m.text}</p>
-                    <div class="flex justify-between items-center pt-4 border-t-2 border-gray-100">
-                        <span class="time-tag">日期：${m.time}</span>
-                        <button onclick="deleteItem('memo', ${m.id})" class="btn-delete">刪除內容</button>
+                <div class="bg-white p-6 rounded-[2rem] border-2 border-slate-100 shadow mb-4">
+                    <div class="flex justify-between items-start mb-2">
+                        <div class="text-blue-800 font-black text-2xl">📅 ${m.date}</div>
+                        <button onclick="deleteMemo(${m.id})" class="text-red-500 font-black text-xl">刪除</button>
                     </div>
+                    <div class="text-3xl font-bold text-slate-800">${m.text}</div>
                 </div>
-            `).join('') || '<div class="py-20 text-center text-gray-400 text-xl font-black">目前還沒寫任何內容</div>';
+            `).join('') || '<div class="text-center text-slate-400 py-20">目前沒記事</div>';
         }
 
-        // --- 個人電話簿邏輯 ---
-        window.saveContact = () => {
-            const nInput = document.getElementById('contact-name');
-            const pInput = document.getElementById('contact-phone');
-            const name = nInput.value.trim();
-            const phone = pInput.value.trim();
-            if (!name || !phone) return;
-            const contacts = JSON.parse(localStorage.getItem(CONTACTS_KEY) || '[]');
-            contacts.unshift({ id: Date.now(), name, phone });
-            localStorage.setItem(CONTACTS_KEY, JSON.stringify(contacts));
-            nInput.value = ""; pInput.value = "";
-            switchSubTab('contacts', 'view');
-        };
-
-        function renderContacts() {
-            const list = document.getElementById('contacts-list');
-            const contacts = JSON.parse(localStorage.getItem(CONTACTS_KEY) || '[]');
-            list.innerHTML = contacts.map(c => `
-                <div class="flex justify-between items-center p-6 bg-blue-50/50 rounded-3xl border-4 border-blue-100 shadow-sm animate-fade-in">
-                    <div>
-                        <div class="contact-name">${c.name}</div>
-                        <div class="contact-phone mt-1 tracking-wider">${c.phone}</div>
-                    </div>
-                    <button onclick="deleteItem('contact', ${c.id})" class="btn-delete">刪除</button>
-                </div>
-            `).join('') || '<div class="py-20 text-center text-gray-400 text-xl font-black">電話簿目前空空的</div>';
+        function deleteMemo(id) {
+            let memos = JSON.parse(localStorage.getItem(MEMO_KEY) || '[]');
+            memos = memos.filter(m => m.id !== id);
+            localStorage.setItem(MEMO_KEY, JSON.stringify(memos));
+            renderCalendar(); updateDetails(); renderMemoList();
         }
 
-        // --- 刪除功能 ---
-        window.deleteItem = (type, id) => {
-            if (!confirm("確定要刪除嗎？刪掉後找不回來喔！")) return;
-            const key = type === 'memo' ? MEMO_KEY : CONTACTS_KEY;
-            let items = JSON.parse(localStorage.getItem(key) || '[]');
-            items = items.filter(i => i.id !== id);
-            localStorage.setItem(key, JSON.stringify(items));
-            type === 'memo' ? renderMemos() : renderContacts();
+        window.switchTab = (tab) => {
+            document.getElementById('section-calendar').classList.toggle('hidden', tab !== 'calendar');
+            document.getElementById('section-contacts').classList.toggle('hidden', tab !== 'contacts');
+            document.getElementById('section-memo').classList.toggle('hidden', tab !== 'memo');
+            document.getElementById('tab-calendar').className = `flex-1 py-8 text-2xl font-black ${tab === 'calendar' ? 'tab-active' : 'text-gray-400'}`;
+            document.getElementById('tab-contacts').className = `flex-1 py-8 text-2xl font-black ${tab === 'contacts' ? 'tab-active' : 'text-gray-400'}`;
+            document.getElementById('tab-memo').className = `flex-1 py-8 text-2xl font-black ${tab === 'memo' ? 'tab-active' : 'text-gray-400'}`;
+            if(tab === 'contacts') renderContacts();
+            if(tab === 'memo') renderMemoList();
         };
 
-        // --- 核心初始化函式 ---
+        window.changeMonth = (dir) => {
+            currentMonthDate.setMonth(currentMonthDate.getMonth() + dir);
+            renderCalendar();
+        };
+
         window.onload = function() {
+            setInterval(() => {
+                const now = new Date();
+                const h = now.getHours().toString().padStart(2, '0');
+                const m = now.getMinutes().toString().padStart(2, '0');
+                const s = now.getSeconds().toString().padStart(2, '0');
+                document.getElementById('clock').textContent = `${h}:${m}:${s}`;
+            }, 1000);
+            
             const now = new Date();
-            const y = now.getFullYear(), m = now.getMonth(), d = now.getDate();
-            
-            const clockEl = document.getElementById('clock');
-            const updateClock = () => { 
-                if(clockEl) clockEl.textContent = new Date().toTimeString().split(' ')[0]; 
-            };
-            setInterval(updateClock, 1000);
-            updateClock();
-
-            document.getElementById('date-display').textContent = now.toLocaleDateString('zh-TW', { weekday: 'long', month: 'long', day: 'numeric' });
-            const lun = calculateLunar(y, m, d);
-            document.getElementById('lunar-display-top').textContent = `農曆 ${lun.month}${lun.day}`;
-            document.getElementById('calendar-month').textContent = `${y}年 ${m + 1}月`;
-
-            const grid = document.getElementById('calendar-grid');
-            if(grid) {
-                const firstDay = new Date(y, m, 1).getDay();
-                const totalDays = new Date(y, m + 1, 0).getDate();
-                let html = "";
-                for (let i = 0; i < firstDay; i++) html += `<div></div>`;
-                for (let i = 1; i <= totalDays; i++) {
-                    const l = calculateLunar(y, m, i);
-                    const isToday = i === d;
-                    const activeClass = isToday ? 'bg-blue-700 text-white rounded-2xl shadow-xl scale-110 z-10 border-2 border-white' : 'text-gray-900 border border-gray-100';
-                    html += `
-                        <div class="calendar-day ${activeClass} transition-all">
-                            <span class="text-lg font-black">${i}</span>
-                            <span class="text-[10px] ${isToday ? 'text-blue-100' : 'text-blue-600'} font-bold">${l.day}</span>
-                        </div>
-                    `;
-                }
-                grid.innerHTML = html;
-            }
-
-            const fortunes = ["宜保持愉快心情。", "適合去公園散散步。", "整理房間，迎接福氣。", "打個電話跟老友聊聊。", "適合吃點營養好吃的。"];
-            document.getElementById('fortune-text').textContent = fortunes[d % fortunes.length];
-            
-            renderMemos();
-            renderContacts();
+            document.getElementById('date-now').textContent = now.toLocaleDateString('zh-TW', { year:'numeric', month: 'long', day: 'numeric', weekday: 'long' });
+            const lun = getLunarInfo(now.getFullYear(), now.getMonth(), now.getDate());
+            document.getElementById('lunar-now').textContent = `農曆 ${lun.text}`;
+            renderCalendar();
+            updateDetails();
         };
     </script>
 </body>
